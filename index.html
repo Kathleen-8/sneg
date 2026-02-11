@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Sneg Animations + Effects</title>
+  <title>Post Processing Demo</title>
 
   <!-- Model Viewer -->
   <script type="module"
     src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
   </script>
 
-  <!-- Post Processing -->
+  <!-- Effects -->
   <script type="module"
     src="https://unpkg.com/@google/model-viewer/dist/model-viewer-effects.min.js">
   </script>
@@ -20,36 +20,14 @@
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-    }
-
-    #controls {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 10;
-      background: white;
-      padding: 12px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
-    }
-
-    button {
-      margin: 4px;
-      padding: 6px 12px;
-      cursor: pointer;
-    }
-
-    .effects {
-      margin-top: 10px;
-      font-size: 14px;
+      background: #2b2b2b; /* графитовый */
+      overflow: hidden;
     }
 
     model-viewer {
       width: 100vw;
       height: 100vh;
-      background: white;
+      background: #2b2b2b;
     }
 
   </style>
@@ -57,158 +35,50 @@
 
 <body>
 
-<div id="controls">
-
-  <!-- Кнопки анимаций -->
-  <button id="btn1">Качание</button>
-  <button id="btn2">Прыжок</button>
-
-  <hr>
-
-  <!-- Эффекты -->
-  <div class="effects">
-
-    <label>
-      <input type="checkbox" id="bloom">
-      Bloom
-    </label><br>
-
-    <label>
-      <input type="checkbox" id="outline">
-      Outline
-    </label><br>
-
-    <label>
-      <input type="checkbox" id="colorgrade" checked>
-      ColorGrade
-    </label>
-
-  </div>
-
-</div>
-
 
 <model-viewer
-  id="mv"
   src="sneg-a.glb"
   camera-controls
-  autoplay
-  animation-crossfade-duration="0"
-  exposure="1"
-  shadow-intensity="1"
+  auto-rotate
+  exposure="1.2"
+  shadow-intensity="1.5"
+  environment-image="neutral"
 >
 
   <!-- Post Processing -->
   <effect-composer render-mode="quality">
 
+    <!-- Сильное свечение -->
     <bloom-effect
-      strength="0.8"
-      radius="0.4"
-      blend-mode="skip">
+      strength="2.5"
+      radius="0.7"
+      threshold="0.2"
+      blend-mode="default">
     </bloom-effect>
 
+
+    <!-- Яркий контур -->
     <outline-effect
-      color="blue"
-      strength="2"
-      blend-mode="skip">
+      color="#00ffff"
+      strength="4"
+      pulse="0.8"
+      blend-mode="default">
     </outline-effect>
 
+
+    <!-- Усиление цветов -->
     <color-grade-effect
-      contrast="1.2"
-      saturation="1.3"
+      contrast="1.6"
+      saturation="1.8"
+      brightness="1.1"
       blend-mode="default">
     </color-grade-effect>
+
 
   </effect-composer>
 
 </model-viewer>
 
-
-<script>
-(() => {
-
-  const mv = document.getElementById('mv');
-
-  const btn1 = document.getElementById('btn1');
-  const btn2 = document.getElementById('btn2');
-
-  const bloom = document.getElementById('bloom');
-  const outline = document.getElementById('outline');
-  const colorgrade = document.getElementById('colorgrade');
-
-
-  const effects = mv
-    .querySelector("effect-composer")
-    .children;
-
-
-  let animations = [];
-
-
-  // Загрузка модели
-  mv.addEventListener('load', () => {
-
-    animations = mv.availableAnimations;
-
-    console.log('Animations:', animations);
-
-    // Первая анимация
-    if (animations.length >= 1) {
-
-      mv.animationName = animations[0];
-      mv.play();
-
-    }
-
-  });
-
-
-  // Качание
-  btn1.addEventListener('click', () => {
-
-    if (animations.length >= 1) {
-
-      mv.animationName = animations[0];
-      mv.currentTime = 0;
-      mv.play();
-
-    }
-
-  });
-
-
-  // Прыжок
-  btn2.addEventListener('click', () => {
-
-    if (animations.length >= 2) {
-
-      mv.animationName = animations[1];
-      mv.currentTime = 0;
-      mv.play();
-
-    }
-
-  });
-
-
-  // Эффекты
-  const inputs = [bloom, outline, colorgrade];
-
-
-  inputs.forEach((input, index) => {
-
-    input.addEventListener("change", (e) => {
-
-      effects[index].blendMode =
-        e.target.checked ? "default" : "skip";
-
-    });
-
-  });
-
-
-})();
-</script>
 
 </body>
 </html>
