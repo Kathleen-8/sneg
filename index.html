@@ -1,83 +1,111 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Post Processing Demo</title>
+<title>Outline Effect Demo</title>
 
-  <!-- Model Viewer -->
-  <script type="module"
-    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
-  </script>
+<!-- Model Viewer -->
+<script type="module"
+  src="https://unpkg.com/@google/model-viewer@3.4.0/dist/model-viewer.min.js">
+</script>
 
-  <!-- Effects -->
-  <script type="module"
-    src="https://unpkg.com/@google/model-viewer/dist/model-viewer-effects.min.js">
-  </script>
+<!-- Effects -->
+<script type="module"
+  src="https://unpkg.com/@google/model-viewer-effects@1.0.0/dist/model-viewer-effects.min.js">
+</script>
 
-  <style>
 
-    body {
-      margin: 0;
-      background: #2b2b2b; /* графитовый */
-      overflow: hidden;
-    }
+<style>
 
-    model-viewer {
-      width: 100vw;
-      height: 100vh;
-      background: #2b2b2b;
-    }
+body {
+  margin: 0;
+  background: #2b2b2b; /* графит */
+  font-family: Arial;
+}
 
-  </style>
+#panel {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  z-index: 10;
+}
+
+button {
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+model-viewer {
+  width: 100vw;
+  height: 100vh;
+  background: #2b2b2b;
+}
+
+</style>
 </head>
 
 <body>
 
 
+<!-- Панель -->
+<div id="panel">
+  <button id="toggle">Включить контур</button>
+</div>
+
+
 <model-viewer
+  id="mv"
   src="sneg-a.glb"
   camera-controls
   auto-rotate
-  exposure="1.2"
+  exposure="1.3"
   shadow-intensity="1.5"
   environment-image="neutral"
 >
 
-  <!-- Post Processing -->
+  <!-- ЭФФЕКТ -->
   <effect-composer render-mode="quality">
 
-    <!-- Сильное свечение -->
-    <bloom-effect
-      strength="2.5"
-      radius="0.7"
-      threshold="0.2"
-      blend-mode="default">
-    </bloom-effect>
-
-
-    <!-- Яркий контур -->
     <outline-effect
+      id="outline"
       color="#00ffff"
-      strength="4"
-      pulse="0.8"
-      blend-mode="default">
+      strength="6"
+      pulse="1.2"
+      blend-mode="skip">
     </outline-effect>
-
-
-    <!-- Усиление цветов -->
-    <color-grade-effect
-      contrast="1.6"
-      saturation="1.8"
-      brightness="1.1"
-      blend-mode="default">
-    </color-grade-effect>
-
 
   </effect-composer>
 
 </model-viewer>
+
+
+<script>
+
+const btn = document.getElementById("toggle");
+const outline = document.getElementById("outline");
+
+let enabled = false;
+
+
+// Кнопка ВКЛ / ВЫКЛ
+btn.addEventListener("click", () => {
+
+  enabled = !enabled;
+
+  outline.blendMode = enabled ? "default" : "skip";
+
+  btn.textContent = enabled
+    ? "Выключить контур"
+    : "Включить контур";
+
+});
+
+</script>
 
 
 </body>
